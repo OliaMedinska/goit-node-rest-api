@@ -1,14 +1,16 @@
+
 import contactsService from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from '../schemas/contactSchemas';
 import validateBody from '../helpers/validateBody';
 import HttpError from '../helpers/HttpError';
 
+// Przykład komentarza do funkcji
 export const getAllContacts = async (req, res) => {
   try {
     const contacts = await contactsService.listContacts();
     res.status(200).json(contacts);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 };
 
@@ -22,7 +24,7 @@ export const getOneContact = async (req, res) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 };
 
@@ -31,12 +33,12 @@ export const deleteContact = async (req, res) => {
   try {
     const removedContact = await contactsService.removeContact(contactId);
     if (removedContact) {
-      res.status(200).json(removedContact);
+      res.status(204).send(); // Zmiana statusu HTTP
     } else {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 };
 
@@ -51,7 +53,7 @@ export const createContact = async (req, res) => {
     if (error instanceof HttpError) {
       res.status(error.status).json({ message: error.message });
     } else {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
   }
 };
@@ -76,7 +78,7 @@ export const updateContact = async (req, res) => {
     if (error instanceof HttpError) {
       res.status(error.status).json({ message: error.message });
     } else {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
   }
 };
