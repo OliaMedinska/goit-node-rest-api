@@ -3,6 +3,7 @@ import { createContactSchema, updateContactSchema } from "../schemas/contactsSch
 import HttpError from '../helpers/HttpError.js';
 import validateBody from '../helpers/validateBody.js';
 
+
 export const getAllContacts = async (req, res) => {
   try {
     const contacts = await listContacts();
