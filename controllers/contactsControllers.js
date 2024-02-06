@@ -1,13 +1,11 @@
+import { listContacts, getContactById, removeContact, addContact } from "../services/contactsServices.js";
+import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import HttpError from '../helpers/HttpError.js';
+import validateBody from '../helpers/validateBody.js';
 
-import contactsService from "../services/contactsServices.js";
-import { createContactSchema, updateContactSchema } from '../schemas/contactSchemas';
-import validateBody from '../helpers/validateBody';
-import HttpError from '../helpers/HttpError';
-
-// Przykład komentarza do funkcji
 export const getAllContacts = async (req, res) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
     res.status(500).json({ error: error.message || 'Internal Server Error' });
@@ -17,7 +15,7 @@ export const getAllContacts = async (req, res) => {
 export const getOneContact = async (req, res) => {
   const contactId = req.params.id;
   try {
-    const contact = await contactsService.getContactById(contactId);
+    const contact = await getContactById(contactId);
     if (contact) {
       res.status(200).json(contact);
     } else {
@@ -31,9 +29,9 @@ export const getOneContact = async (req, res) => {
 export const deleteContact = async (req, res) => {
   const contactId = req.params.id;
   try {
-    const removedContact = await contactsService.removeContact(contactId);
+    const removedContact = await removeContact(contactId);
     if (removedContact) {
-      res.status(204).send(); // Zmiana statusu HTTP
+      res.status(200).json(removedContact);
     } else {
       res.status(404).json({ message: 'Not found' });
     }
@@ -47,13 +45,13 @@ export const createContact = async (req, res) => {
     validateBody(createContactSchema)(req, res, () => {});
 
     const { name, email, phone } = req.body;
-    const newContact = await contactsService.addContact(name, email, phone);
+    const newContact = await addContact(name, email, phone);
     res.status(201).json(newContact);
   } catch (error) {
     if (error instanceof HttpError) {
       res.status(error.status).json({ message: error.message });
     } else {
-      res.status(500).json({ error: error.message || 'Internal Server Error' });
+      res.status(400).json({ message: error.message || 'Bad Request' });
     }
   }
 };
@@ -68,7 +66,7 @@ export const updateContact = async (req, res) => {
       throw new HttpError(400, 'Body must have at least one field');
     }
 
-    const updatedContact = await contactsService.updateContact(contactId, updatedFields);
+    const updatedContact = await updateContact(contactId, updatedFields);
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
@@ -78,7 +76,7 @@ export const updateContact = async (req, res) => {
     if (error instanceof HttpError) {
       res.status(error.status).json({ message: error.message });
     } else {
-      res.status(500).json({ error: error.message || 'Internal Server Error' });
+      res.status(400).json({ message: error.message || 'Bad Request' });
     }
   }
 };
