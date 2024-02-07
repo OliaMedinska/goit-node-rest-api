@@ -4,16 +4,16 @@ import HttpError from '../helpers/HttpError.js';
 import validateBody from '../helpers/validateBody.js';
 
 
-export const getAllContacts = async (req, res) => {
+export const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
+    next(error)
   }
 };
 
-export const getOneContact = async (req, res) => {
+export const getOneContact = async (req, res, next) => {
   const contactId = req.params.id;
   try {
     const contact = await getContactById(contactId);
@@ -23,11 +23,11 @@ export const getOneContact = async (req, res) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
+    next(error)
   }
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   const contactId = req.params.id;
   try {
     const removedContact = await removeContact(contactId);
@@ -37,27 +37,22 @@ export const deleteContact = async (req, res) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
+    next(error)
   }
 };
 
-export const createContact = async (req, res) => {
+export const createContact = async (req, res, next) => {
   try {
-    validateBody(createContactSchema)(req, res, () => {});
-
+    validateBody(createContactSchema);
     const { name, email, phone } = req.body;
     const newContact = await addContact(name, email, phone);
     res.status(201).json(newContact);
   } catch (error) {
-    if (error instanceof HttpError) {
-      res.status(error.status).json({ message: error.message });
-    } else {
-      res.status(400).json({ message: error.message || 'Bad Request' });
-    }
+    next(error);
   }
 };
 
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
   const contactId = req.params.id;
   const updatedFields = req.body;
   try {
@@ -74,10 +69,6 @@ export const updateContact = async (req, res) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    if (error instanceof HttpError) {
-      res.status(error.status).json({ message: error.message });
-    } else {
-      res.status(400).json({ message: error.message || 'Bad Request' });
-    }
+    next(error)
   }
 };
