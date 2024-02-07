@@ -1,8 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-const __filename = new URL(import.meta.url).pathname;
-// const __dirname = path.dirname(__filename);
-const contactsPath = path.resolve("db", "/contacts.json");
+const contactsPath = path.resolve("db", "contacts.json");
 
 export async function listContacts() {
     const contactsData = await fs.readFile(contactsPath, 'utf-8');
