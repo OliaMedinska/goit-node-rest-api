@@ -1,3 +1,20 @@
+// {
+//   name: {
+//     type: String,
+//     required: [true, 'Set name for contact'],
+//   },
+//   email: {
+//     type: String,
+//   },
+//   phone: {
+//     type: String,
+//   },
+//   favorite: {
+//     type: Boolean,
+//     default: false,
+//   },
+// }
+
 import { promises as fs } from 'fs';
 import path from 'path';
 const contactsPath = path.resolve("db", "contacts.json");
