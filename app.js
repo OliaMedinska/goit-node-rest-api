@@ -10,7 +10,7 @@ app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/your-database-name', {
+mongoose.connect('mongodb://localhost:27017/db-contacts', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
