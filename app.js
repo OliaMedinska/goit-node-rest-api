@@ -5,22 +5,17 @@ import cors from 'cors';
 import contactsRouter from './routes/contactsRouter.js';
 
 const app = express();
+const DB_HOST = 'mongodb+srv://Olha:dCMVMe0nOlW21M7c@cluster0.qowjz4y.mongodb.net/db-contacts?retryWrites=true&w=majority';
 
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/db-contacts', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'Connection error:'));
-db.once('open', () => {
-  console.log('Database connection successful');
-});
+mongoose.connect(DB_HOST)
+  .then(() => app.listen(3000))
+  .catch(error => {
+    console.log(error.message);
+    process.exit(1)});
 
 app.use('/api/contacts', contactsRouter);
 
@@ -33,6 +28,6 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.listen(3000, () => {
-  console.log('Server is running. Use our API on port: 3000');
-});
+// app.listen(3000, () => {
+//   console.log('Server is running. Use our API on port: 3000');
+// });
