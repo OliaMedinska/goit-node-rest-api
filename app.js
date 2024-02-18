@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
 import contactsRouter from './routes/contactsRouter.js';
+import { DB_HOST} from './config.js';
 
 const app = express();
 
