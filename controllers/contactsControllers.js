@@ -3,7 +3,6 @@ import { createContactSchema, updateContactSchema } from "../schemas/contactsSch
 import HttpError from '../helpers/HttpError.js';
 import validateBody from '../helpers/validateBody.js';
 
-
 export const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await listContacts();
@@ -72,3 +71,26 @@ export const updateContact = async (req, res, next) => {
     next(error)
   }
 };
+
+export const updateStatusContact = async (req, res, next) => {
+  const contactId = req.params.id;
+  const updatedFields = req.body;
+  try {
+    validateBody(updateContactSchema)(req, res, () => {});
+    if (typeof updatedFields.favorite !== 'boolean') {
+      throw new HttpError(400, 'Invalid value for the "favorite" field');
+    }
+
+    const updatedContact = await updateStatusContact(contactId, updatedFields);
+
+    if (updatedContact) {
+      res.status(200).json(updatedContact);
+    } else {
+      res.status(404).json({ message: 'Not found' });
+    }
+
+  } catch (error) {
+    next(error)
+  }
+
+}
