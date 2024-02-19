@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
 import contactsRouter from './routes/contactsRouter.js';
-import { DB_HOST} from './config.js';
+
+const {DB_HOST} = process.env;
 
 const app = express();
 
@@ -15,7 +16,8 @@ mongoose.connect(DB_HOST)
   .then(() => app.listen(3000))
   .catch(error => {
     console.log(error.message);
-    process.exit(1)});
+    process.exit(1)
+  });
 
 app.use('/api/contacts', contactsRouter);
 
