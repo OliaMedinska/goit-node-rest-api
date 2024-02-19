@@ -1,5 +1,6 @@
 node_modules/
 config.js
+.env
 .idea
 .vscode
 .DS_Store
