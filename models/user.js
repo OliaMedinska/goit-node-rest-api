@@ -1,3 +1,4 @@
+
 import {Schema, model} from 'mongoose';
 
 export const userSchema = new Schema({
