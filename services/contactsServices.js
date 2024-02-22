@@ -1,3 +1,4 @@
+
 import { Contact } from '../models/contacts.js';
 
 export async function listContacts() {
