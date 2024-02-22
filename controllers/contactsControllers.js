@@ -1,4 +1,11 @@
-import { listContacts, getContactById, removeContact, addContact } from "../services/contactsServices.js";
+import {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContactById, 
+} from "../services/contactsServices.js";
+
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import HttpError from '../helpers/HttpError.js';
 import validateBody from '../helpers/validateBody.js';
@@ -8,7 +15,7 @@ export const getAllContacts = async (req, res, next) => {
     const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -22,7 +29,7 @@ export const getOneContact = async (req, res, next) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -36,7 +43,7 @@ export const deleteContact = async (req, res, next) => {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -58,17 +65,17 @@ export const updateContact = async (req, res, next) => {
     validateBody(updateContactSchema)(req, res, () => {});
 
     if (Object.keys(updatedFields).length === 0) {
-      throw new HttpError(400, 'Body must have at least one field');
+      throw HttpError(400, 'Body must have at least one field');
     }
 
-    const updatedContact = await updateContact(contactId, updatedFields);
+    const updatedContact = await updateContactById(contactId, updatedFields); // Zmienione
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
       res.status(404).json({ message: 'Not found' });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -78,19 +85,17 @@ export const updateStatusContact = async (req, res, next) => {
   try {
     validateBody(updateContactSchema)(req, res, () => {});
     if (typeof updatedFields.favorite !== 'boolean') {
-      throw new HttpError(400, 'Invalid value for the "favorite" field');
+      throw HttpError(400, 'Invalid value for the "favorite" field');
     }
 
-    const updatedContact = await updateStatusContact(contactId, updatedFields);
+    const updatedContact = await updateContactById(contactId, updatedFields);
 
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
       res.status(404).json({ message: 'Not found' });
     }
-
   } catch (error) {
-    next(error)
+    next(error);
   }
-
-}
+};
