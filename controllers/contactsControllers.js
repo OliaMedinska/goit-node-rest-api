@@ -49,11 +49,22 @@ export const deleteContact = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
+  const validationResult = createContactSchema.validate(req.body);
+
+  if (validationResult.error) {
+    return next(HttpError(400, validationResult.error.message));
+  }
+
   try {
-    validateBody(createContactSchema);
+    validateBody(createContactSchema)(req, res, () => {});;
     const { name, email, phone } = req.body;
     const newContact = await addContact(name, email, phone);
-    res.status(201).json(newContact);
+    res.status(201).json({
+      id: newContact._id,
+      name: newContact.name,
+      email: newContact.email,
+      phone: newContact.phone,
+    });
   } catch (error) {
     next(error);
   }
